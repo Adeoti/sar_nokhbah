@@ -6,23 +6,26 @@ use Filament\Forms;
 use Filament\Tables;
 use App\Models\Hotel;
 use App\Models\Booking;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use App\Models\Customer;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Models\SiteSetting;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\RichEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\DateTimePicker;
+use NunoMaduro\Collision\Adapters\Phpunit\State;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Admin\Resources\HotelsBookingResource\Pages;
 use App\Filament\Admin\Resources\HotelsBookingResource\RelationManagers;
-use App\Models\SiteSetting;
-use Filament\Tables\Columns\TextColumn;
 
 class HotelsBookingResource extends Resource
 {
@@ -30,12 +33,30 @@ class HotelsBookingResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-home-modern';
     protected static ?string $navigationGroup = "Booking";
+   
 
 
     protected static ?string $title = "Hotel Bookings";
     protected static ?string $navigationLabel = "Hotel Bookings";
     protected static ?string $pluralModelLabel = "Hotel Bookings";
     protected  ?string $heading = "Hotel Bookings";
+
+
+    protected static ?string $navigationBadgeTooltip = "Active Hotel Bookings";
+    public static function getNavigationBadge(): ?string
+    {
+        return Booking::where('type','hotel')->where('status','Active')->count();
+    }
+
+    public static function getNavigationBadgeColor(): string | array | null
+    {
+        return 'info';
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return Booking::where('type','hotel');
+    }
 
     public static function form(Form $form): Form
     {
@@ -239,7 +260,7 @@ class HotelsBookingResource extends Resource
         ];
         $currency = "";
 
-        $reference_code = "Nokhabah_".date('Ymdhis').uniqid();
+        $reference_code = "Nokhabah_HT_".date('Ymdhis').uniqid();
 
         //dd($reference_code);
 
@@ -260,7 +281,8 @@ class HotelsBookingResource extends Resource
                     
                     ->schema([
                         
-                        Select::make('name')
+                        Select::make('hotel_id')
+                            ->label('Hotel Name')
                             ->required()
                             ->searchable()
                             ->options(Hotel::all()->pluck('name','id'))
@@ -321,6 +343,7 @@ class HotelsBookingResource extends Resource
                                                 ]),
 
                                                 Hidden::make('user_id')->default(auth()->id()),
+                                               
 
                                         ])->columns(2)
                             ])
@@ -329,7 +352,7 @@ class HotelsBookingResource extends Resource
                             }),
     
 
-
+                            Hidden::make('type')->default('hotel'),
 
                             Select::make('customer_id')
                                 ->searchable()
@@ -411,26 +434,70 @@ class HotelsBookingResource extends Resource
 
                                         TextInput::make('credit')
                                             ->numeric()
-                                            ->prefix($currency),
+                                            ->live()
+                                            ->required()
+                                            ->prefix($currency)
+                                            ->afterStateUpdated(function(callable $get, $set, $state){
+                                                
+                                                if($get('vat') != null && $get('debit') != null){
+                                                    $total_debit = $get('vat')+$get('debit');
+                                                    $balance = $total_debit - $get('credit');
+
+                                                    $set('total_debit', $total_debit);
+                                                    $set('balance', $balance);
+                                                }
+                                            }),
 
                                         TextInput::make('vat')
                                             ->numeric()
+                                            ->afterStateUpdated(function(callable $get, $set, $state){
+                                                
+                                                if($get('vat') != null && $get('debit') != null){
+                                                    $total_debit = $get('vat')+$get('debit');
+                                                    $balance = $total_debit - $get('credit');
+
+                                                    $set('total_debit', $total_debit);
+                                                    $set('balance', $balance);
+                                                }
+                                            })
+
+                                            ->live()
+                                            ->required()
                                             ->prefix($currency),
 
                                         TextInput::make('debit')
                                             ->numeric()
-                                            ->prefix($currency),
+                                            ->live()
+                                            ->afterStateUpdated(function(callable $get, $set, $state){
+                                                
+                                                if($get('vat') != null && $get('debit') != null){
+                                                    $total_debit = $get('vat')+$get('debit');
+                                                    $balance = $total_debit - $get('credit');
+
+                                                    $set('total_debit', $total_debit);
+                                                    $set('balance', $balance);
+                                                }
+                                            })
+                                            ->prefix($currency)
+                                            ->required()
+                                            ,
 
                                         Select::make('status')
                                             ->searchable()
-                                            
+                                            ->required()
                                             ->options([
                                                 'Active' => 'Active',
                                                 'Completed' => 'Completed',
                                                 'Cancelled' => 'Cancelled'
 
-                                            ])
+                                            ]),
 
+
+                                            TextInput::make('total_debit')
+                                            ->readOnly(),
+                                            TextInput::make('balance')
+                                            ->readOnly()
+                                            ,
 
                                     ])->columns(4),
 
@@ -464,26 +531,89 @@ class HotelsBookingResource extends Resource
     }
 
     public static function table(Table $table): Table
-    {
+    { 
+        
+        $currency = "";
+
+        $total_debit = $balance = 0;
+        
+        $sitecurrency = SiteSetting::first()->currency;
+
+        if(!empty($sitecurrency)){
+            $currency = $sitecurrency;
+        }else{
+            $currency = "USD";
+        }
+
+
         return $table
             ->columns([
                 //
+       
+
+
+                TextColumn::make('reference_code')
+                    ->label('Reference Code')
+                    ->searchable()
+                    ->copyable()
+                    ->copyMessage('Reference code copied!')
+                    ->toggleable(),
 
 
                 TextColumn::make('hotel.name')
                     ->label('Hotel Name')
                     ->searchable()
+                    ->sortable()
                     ->toggleable(),
 
                 TextColumn::make('customer.name')
                     ->label('Customer')
                     ->searchable()
+                    ->sortable()
                     ->toggleable(),
 
-                TextColumn::make('customer.name')
-                    ->label('Customer')
+                TextColumn::make('vat')
+                    ->label('VAT')
+                    ->money($currency)
                     ->searchable()
                     ->toggleable(),
+                    
+                TextColumn::make('debit')
+                    ->label('Debit')
+                    ->money($currency)
+                    ->searchable()
+                    ->toggleable(),
+
+                
+                
+                TextColumn::make('total_debit')
+                    ->label('Total Debit')
+                    ->money($currency)
+                    ->searchable()
+                    ->toggleable(),
+                
+                TextColumn::make('credit')
+                    ->label('Credit')
+                    ->searchable()
+                    ->money($currency)
+                    ->toggleable(),
+
+                
+
+
+                TextColumn::make('balance')
+                    ->label('Balance')
+                    ->money($currency)
+                    ->searchable()
+                    ->toggleable(),
+                
+                    TextColumn::make('status')
+                        ->badge()
+                        ->color(fn (string $state): string => match ($state) {
+                            'Cancelled' => 'danger',
+                            'Active' => 'success',
+                            'Completed' => 'info',
+                        })
 
                 
             ])

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Customer;
+use App\Models\Hotel;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -16,7 +17,7 @@ return new class extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
 
-            $table->string('name')->nullable();
+            $table->foreignIdFor(Hotel::class);
             $table->text('address')->nullable();
             $table->string('type')->nullable();
             $table->string('status')->default('active');

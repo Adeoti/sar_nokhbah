@@ -9,4 +9,20 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateTransportationBooking extends CreateRecord
 {
     protected static string $resource = TransportationBookingResource::class;
+
+
+
+    
+    protected function afterCreate(): void
+    {
+        $this->dispatch(
+            'alert',
+            title: 'Booking Recorded',
+            text: 'You\'ve successfully booked a tour.',
+            type: 'success',
+            button: 'Got it'
+        );
+    }
+
+    
 }

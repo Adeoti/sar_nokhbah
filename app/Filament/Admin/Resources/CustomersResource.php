@@ -11,13 +11,14 @@ use Filament\Resources\Resource;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\RichEditor;
+use Filament\Tables\Actions\ExportAction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Admin\Resources\CustomersResource\Pages;
 use App\Filament\Admin\Resources\CustomersResource\RelationManagers;
-use Filament\Tables\Columns\TextColumn;
 
 class CustomersResource extends Resource
 {
@@ -290,6 +291,7 @@ class CustomersResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+        
             ->columns([
                 //
                 TextColumn::make('name')
@@ -336,6 +338,8 @@ class CustomersResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    ExportAction::make()
+                    ->exporter(Customer::class)
                 ]),
             ]);
     }
