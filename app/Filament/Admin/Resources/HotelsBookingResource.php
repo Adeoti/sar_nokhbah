@@ -13,6 +13,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\SiteSetting;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
@@ -26,6 +27,7 @@ use NunoMaduro\Collision\Adapters\Phpunit\State;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Admin\Resources\HotelsBookingResource\Pages;
 use App\Filament\Admin\Resources\HotelsBookingResource\RelationManagers;
+
 
 class HotelsBookingResource extends Resource
 {
@@ -693,6 +695,12 @@ class HotelsBookingResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Action::make('invoice')
+                    ->icon('heroicon-s-document-arrow-down')
+                    ->tooltip('Generate Invoice')
+                    ->color('warning')
+                    ->openUrlInNewTab()
+                    ->url(fn(Booking $record) => route('hotel_booking.pdf.download',$record))
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
