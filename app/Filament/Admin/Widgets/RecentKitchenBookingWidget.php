@@ -32,7 +32,7 @@ class RecentKitchenBookingWidget extends BaseWidget
 
 
         return $table
-            ->heading('Recent Kitchen Orders')
+            ->heading(__('messages.RecentKitchenBookings'))
             ->query(
                 // ...
                 Booking::where('type','kitchen')->orderBy('id','desc')
@@ -43,34 +43,34 @@ class RecentKitchenBookingWidget extends BaseWidget
 
 
                 TextColumn::make('reference_code')
-                    ->label('Reference Code')
+                    ->label(__('messages.ReferenceCode'))
                     ->searchable()
                     ->copyable()
-                    ->copyMessage('Reference code copied!')
+                    ->copyMessage(__('messages.ReferenceCodeCopied'))
                     ->toggleable(),
 
 
                 TextColumn::make('note')
-                    ->label('Order Info')
+                    ->label(__('messages.Note'))
                     ->searchable()
                     ->markdown()
                     ->sortable()
                     ->toggleable(),
 
                 TextColumn::make('customer.name')
-                    ->label('Customer')
+                    ->label(__('messages.Customer'))
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
 
                 TextColumn::make('vat')
-                    ->label('VAT')
+                    ->label(__('messages.VAT'))
                     ->money($currency)
                     ->searchable()
                     ->toggleable(),
                     
                 TextColumn::make('debit')
-                    ->label('Debit')
+                    ->label(__('messages.Debit'))
                     ->money($currency)
                     ->searchable()
                     ->toggleable(),
@@ -78,13 +78,13 @@ class RecentKitchenBookingWidget extends BaseWidget
                 
                 
                 TextColumn::make('total_debit')
-                    ->label('Total Debit')
+                    ->label(__('messages.TotalDebit'))
                     ->money($currency)
                     ->searchable()
                     ->toggleable(),
                 
                 TextColumn::make('credit')
-                    ->label('Credit')
+                    ->label(__('messages.Credit'))
                     ->searchable()
                     ->money($currency)
                     ->toggleable(),
@@ -93,13 +93,14 @@ class RecentKitchenBookingWidget extends BaseWidget
 
 
                 TextColumn::make('balance')
-                    ->label('Balance')
+                    ->label(__('messages.Balance'))
                     ->money($currency)
                     ->searchable()
                     ->toggleable(),
                 
                     TextColumn::make('status')
                         ->badge()
+                        ->label(__('messages.Status'))
                         ->color(fn (string $state): string => match ($state) {
                             'Cancelled' => 'danger',
                             'Active' => 'success',

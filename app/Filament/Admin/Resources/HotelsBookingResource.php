@@ -42,6 +42,50 @@ class HotelsBookingResource extends Resource
     protected  ?string $heading = "Hotel Bookings";
 
 
+
+
+
+
+
+
+
+    
+    public static function getNavigationGroup(): ?string
+    {
+        return __('messages.Booking');
+    }
+
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('messages.HotelBookings');
+    }
+    public static function getModelLabel(): string
+    {
+        return __('messages.Booking');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('messages.HotelBooking');
+    }
+
+
+
+     //Permision Page Settings
+     public static function canAccess(): bool
+     {
+        $active_status = auth()->user()->status;
+ 
+        if($active_status === true){
+         return auth()->user()->can_book_hotel;
+        }else{
+         return false;
+        }
+         
+     }
+
+
     protected static ?string $navigationBadgeTooltip = "Active Hotel Bookings";
     public static function getNavigationBadge(): ?string
     {
@@ -282,7 +326,7 @@ class HotelsBookingResource extends Resource
                     ->schema([
                         
                         Select::make('hotel_id')
-                            ->label('Hotel Name')
+                            ->label(__('messages.HotelName'))
                             ->required()
                             ->searchable()
                             ->options(Hotel::all()->pluck('name','id'))
@@ -292,11 +336,11 @@ class HotelsBookingResource extends Resource
                                         Section::make('')
                                         ->schema([
                                         TextInput::make('name')
-                                        ->label(__('Name'))
+                                        ->label(__('messages.Name'))
                                         ->required(),
 
                                         Select::make('stars')
-                                            ->label(__('Stars'))
+                                            ->label(__('messages.Stars'))
                                             ->required()
                                             ->searchable()
                                             ->options([
@@ -326,6 +370,7 @@ class HotelsBookingResource extends Resource
 
                                             RichEditor::make('address')
                                                 ->required()
+                                                ->label(__('messages.Address'))
                                                 ->toolbarButtons([
                                                     'blockquote',
                                                     'bold',
@@ -334,7 +379,7 @@ class HotelsBookingResource extends Resource
                                                 ]),
 
                                             RichEditor::make('info')
-                                                ->label(__('Info'))
+                                                ->label(__('messages.Info'))
                                                 ->toolbarButtons([
                                                     'blockquote',
                                                     'bold',
@@ -357,24 +402,27 @@ class HotelsBookingResource extends Resource
                             Select::make('customer_id')
                                 ->searchable()
                                 ->required()
-                                ->label('Customer')
+                                ->label(__('messages.Customer'))
                                 ->options(Customer::all()->pluck('name','id'))
                                 ->createOptionForm([
                                     
                 Section::make('')
                 ->schema([
                     TextInput::make('name')
+                        ->label(__('messages.Name'))
                         ->required(),
 
                     TextInput::make('email')
-                        
+                        ->label(__('messages.Email'))
                         ->email()
                         ,
 
                     TextInput::make('phone_number')
+                        ->label(__('messages.PhoneNumber'))
                         ->required()
                         ,
                     Select::make('country')
+                        ->label(__('messages.Country'))
                         ->options($countries)
                         ->searchable()
                         ->required()
@@ -385,6 +433,7 @@ class HotelsBookingResource extends Resource
                 Section::make('')
                     ->schema([
                         RichEditor::make('address')
+                        ->label(__('messages.Address'))
                         ->toolbarButtons([
                             'blockquote',
                             'bold',
@@ -398,6 +447,7 @@ class HotelsBookingResource extends Resource
                             'undo',
                         ]),
                         RichEditor::make('info')
+                        ->label(__('messages.Info'))
                         ->toolbarButtons([
                             'blockquote',
                             'bold',
@@ -423,10 +473,10 @@ class HotelsBookingResource extends Resource
 
                             Hidden::make('user_id')->default(auth()->id()),
                             DateTimePicker::make('start_at')
-                                ->label('Check In'),
+                                ->label(__('messages.CheckIn')),
 
                             DateTimePicker::make('end_at')
-                                ->label('Check Out'),
+                                ->label(__('messages.CheckOut')),
 
 
                                 Section::make('')
@@ -435,6 +485,7 @@ class HotelsBookingResource extends Resource
                                         TextInput::make('credit')
                                             ->numeric()
                                             ->live()
+                                            ->label(__('messages.Credit'))
                                             ->required()
                                             ->prefix($currency)
                                             ->afterStateUpdated(function(callable $get, $set, $state){
@@ -449,6 +500,7 @@ class HotelsBookingResource extends Resource
                                             }),
 
                                         TextInput::make('vat')
+                                            ->label(__('messages.VAT'))
                                             ->numeric()
                                             ->afterStateUpdated(function(callable $get, $set, $state){
                                                 
@@ -466,6 +518,7 @@ class HotelsBookingResource extends Resource
                                             ->prefix($currency),
 
                                         TextInput::make('debit')
+                                            ->label(__('messages.Debit'))
                                             ->numeric()
                                             ->live()
                                             ->afterStateUpdated(function(callable $get, $set, $state){
@@ -483,6 +536,7 @@ class HotelsBookingResource extends Resource
                                             ,
 
                                         Select::make('status')
+                                            ->label(__('messages.Status'))
                                             ->searchable()
                                             ->required()
                                             ->options([
@@ -494,15 +548,17 @@ class HotelsBookingResource extends Resource
 
 
                                             TextInput::make('total_debit')
+                                            ->label(__('messages.TotalDebit'))
                                             ->readOnly(),
                                             TextInput::make('balance')
+                                            ->label(__('messages.Balance'))
                                             ->readOnly()
                                             ,
 
                                     ])->columns(4),
 
                                 RichEditor::make('note')
-                                    ->label('Booking Info')
+                                    ->label(__('messages.BookingInfo'))
                                     ->toolbarButtons([
                                         'bold',
                                         'italic',
@@ -511,7 +567,7 @@ class HotelsBookingResource extends Resource
                                     ]),
 
                                 RichEditor::make('property_details')
-                                    ->label('Room Details')
+                                    ->label(__('messages.RoomDetails'))
                                     ->toolbarButtons([
                                         'bold',
                                         'italic',
@@ -553,33 +609,47 @@ class HotelsBookingResource extends Resource
 
 
                 TextColumn::make('reference_code')
-                    ->label('Reference Code')
+                    ->label(__('messages.ReferenceCode'))
                     ->searchable()
                     ->copyable()
-                    ->copyMessage('Reference code copied!')
+                    ->copyMessage(__('messages.ReferenceCodeCopied'))
                     ->toggleable(),
 
 
                 TextColumn::make('hotel.name')
-                    ->label('Hotel Name')
+                    ->label(__('messages.HotelName'))
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+
+                TextColumn::make('start_at')
+                    ->label(__('messages.CheckIn'))
+                    ->dateTime()
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+
+                TextColumn::make('end_at')
+                    ->label(__('messages.CheckOut'))
+                    ->dateTime()
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
 
                 TextColumn::make('customer.name')
-                    ->label('Customer')
+                    ->label(__('messages.Customer'))
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
 
                 TextColumn::make('vat')
-                    ->label('VAT')
+                    ->label(__('messages.VAT'))
                     ->money($currency)
                     ->searchable()
                     ->toggleable(),
                     
                 TextColumn::make('debit')
-                    ->label('Debit')
+                    ->label(__('messages.Debit'))
                     ->money($currency)
                     ->searchable()
                     ->toggleable(),
@@ -587,13 +657,13 @@ class HotelsBookingResource extends Resource
                 
                 
                 TextColumn::make('total_debit')
-                    ->label('Total Debit')
+                    ->label(__('messages.TotalDebit'))
                     ->money($currency)
                     ->searchable()
                     ->toggleable(),
                 
                 TextColumn::make('credit')
-                    ->label('Credit')
+                    ->label(__('messages.Credit'))
                     ->searchable()
                     ->money($currency)
                     ->toggleable(),
@@ -602,13 +672,14 @@ class HotelsBookingResource extends Resource
 
 
                 TextColumn::make('balance')
-                    ->label('Balance')
+                    ->label(__('messages.Balance'))
                     ->money($currency)
                     ->searchable()
                     ->toggleable(),
                 
                     TextColumn::make('status')
                         ->badge()
+                        ->label(__('messages.Status'))
                         ->color(fn (string $state): string => match ($state) {
                             'Cancelled' => 'danger',
                             'Active' => 'success',

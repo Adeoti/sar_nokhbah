@@ -28,7 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->path('cpanel_n')
             ->spa()
-            ->topbar(false)
+            ->topbar(true)
             ->defaultThemeMode(ThemeMode::Light)
 
             //->favicon(asset('images/favicon.png'))

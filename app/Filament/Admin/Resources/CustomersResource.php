@@ -16,8 +16,10 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\RichEditor;
 use Filament\Tables\Actions\ExportAction;
 use Illuminate\Database\Eloquent\Builder;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Admin\Resources\CustomersResource\Pages;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use App\Filament\Admin\Resources\CustomersResource\RelationManagers;
 
 class CustomersResource extends Resource
@@ -26,6 +28,36 @@ class CustomersResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?int $navigationSort = 4;
+
+    public static function getNavigationLabel(): string
+    {
+        return __('messages.Customers');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('messages.Customers');
+    }
+    public static function getModelLabel(): string
+    {
+        return __('messages.Customer');
+    }
+
+
+     //Permision Page Settings
+     public static function canAccess(): bool
+     {
+        $active_status = auth()->user()->status;
+ 
+        if($active_status === true){
+         return auth()->user()->can_view_customer;
+        }else{
+         return false;
+        }
+         
+     }
+
+
 
     public static function form(Form $form): Form
     {
@@ -236,18 +268,21 @@ class CustomersResource extends Resource
                 Section::make('')
                     ->schema([
                         TextInput::make('name')
-                            ->required(),
+                            ->required()
+                            ->label(__('messages.Name')),
 
                         TextInput::make('email')
-                            
+                            ->label(__('messages.Email'))
                             ->email()
                             ,
 
                         TextInput::make('phone_number')
+                            ->label(__('messages.PhoneNumber'))
                             ->required()
                             ,
                         Select::make('country')
                             ->options($countries)
+                            ->label(__('messages.Country'))
                             ->searchable()
                             ->required()
                         
@@ -257,6 +292,7 @@ class CustomersResource extends Resource
                     Section::make('')
                         ->schema([
                             RichEditor::make('address')
+                            ->label(__('messages.Address'))
                             ->toolbarButtons([
                                 'blockquote',
                                 'bold',
@@ -270,6 +306,7 @@ class CustomersResource extends Resource
                                 'undo',
                             ]),
                             RichEditor::make('info')
+                            ->label(__('messages.Info'))
                             ->toolbarButtons([
                                 'blockquote',
                                 'bold',
@@ -291,40 +328,40 @@ class CustomersResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-        
+           
             ->columns([
                 //
                 TextColumn::make('name')
                     ->sortable()
-                    ->label(__('Name'))
+                    ->label(__('messages.Name'))
                     ->searchable(),
                 TextColumn::make('email')
                     ->sortable()
-                    ->label(__('Email'))
+                    ->label(__('messages.Email'))
                     ->searchable(),
                 TextColumn::make('phone_number')
                     ->sortable()
-                    ->label(__('Phone Number'))
+                    ->label(__('messages.PhoneNumber'))
                     ->searchable(),
                 TextColumn::make('country')
-                    ->label(__('Country'))
+                    ->label(__('messages.Country'))
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('address')
                     ->sortable()
                     ->markdown()
                     ->words(8)
-                    ->label(__('Address'))
+                    ->label(__('messages.Address'))
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->sortable()
-                    ->label(__('Added On'))
+                    ->label(__('messages.AddedOn'))
                     ->toggleable()
                     ->date()
                     ->searchable(),
                 TextColumn::make('user.name')
                     ->searchable()
-                    ->label(__('Added By'))
+                    ->label(__('messages.AddedBy'))
                 
                 
 
@@ -338,8 +375,8 @@ class CustomersResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    ExportAction::make()
-                    ->exporter(Customer::class)
+                   
+                    ExportBulkAction::make()
                 ]),
             ]);
     }

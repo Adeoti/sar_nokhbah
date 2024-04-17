@@ -2,22 +2,23 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\HotelsResource\Pages;
-use App\Filament\Admin\Resources\HotelsResource\RelationManagers;
-use App\Models\Hotel;
 use Filament\Forms;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Columns\TextColumn;
+use App\Models\Hotel;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\RichEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Admin\Resources\HotelsResource\Pages;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use App\Filament\Admin\Resources\HotelsResource\RelationManagers;
 
 class HotelsResource extends Resource
 {
@@ -25,6 +26,44 @@ class HotelsResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-home';
     protected static ?int $navigationSort = 3;
+
+
+
+    //Permision Page Settings
+    public static function canAccess(): bool
+    {
+       $active_status = auth()->user()->status;
+
+       if($active_status === true){
+        return auth()->user()->can_view_hotel;
+       }else{
+        return false;
+       }
+        
+    }
+
+
+
+    public static function getNavigationLabel(): string
+    {
+        return __('messages.Hotels');
+    }
+
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('messages.Hotels');
+    }
+    public static function getModelLabel(): string
+    {
+        return __('messages.Hotel');
+    }
+
+
+
+
+
+
 
     public static function form(Form $form): Form
     {
@@ -34,11 +73,11 @@ class HotelsResource extends Resource
                 Section::make('')
                     ->schema([
                        TextInput::make('name')
-                       ->label(__('Name'))
+                       ->label(__('messages.Name'))
                        ->required(),
 
                     Select::make('stars')
-                        ->label(__('Stars'))
+                        ->label(__('messages.Stars'))
                         ->required()
                         ->searchable()
                         ->options([
@@ -68,6 +107,7 @@ class HotelsResource extends Resource
 
                         RichEditor::make('address')
                             ->required()
+                            ->label(__('messages.Stars'))
                             ->toolbarButtons([
                                 'blockquote',
                                 'bold',
@@ -76,7 +116,7 @@ class HotelsResource extends Resource
                             ]),
 
                         RichEditor::make('info')
-                            ->label(__('Info'))
+                            ->label(__('messages.Info'))
                             ->toolbarButtons([
                                 'blockquote',
                                 'bold',
@@ -99,22 +139,22 @@ class HotelsResource extends Resource
                 //
                 TextColumn::make('name')
                     ->searchable()
-                    ->label(__('Name')),
+                    ->label(__('messages.Name')),
                 TextColumn::make('stars')
                     ->searchable()
-                    ->label(__('Stars')),
+                    ->label(__('messages.Stars')),
                 TextColumn::make('address')
                     ->searchable()
                     ->markdown()
                     ->words(7)
-                    ->label(__('Address')),
+                    ->label(__('messages.Address')),
                 TextColumn::make('created_at')
                     ->searchable()
                     ->since()
-                    ->label(__('Added Since')),
+                    ->label(__('messages.AddedSince')),
                 TextColumn::make('user.name')
                     ->searchable()
-                    ->label(__('Added By')),
+                    ->label(__('messages.AddedBy')),
 
 
             ])
@@ -127,6 +167,7 @@ class HotelsResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    ExportBulkAction::make()
                 ]),
             ]);
     }

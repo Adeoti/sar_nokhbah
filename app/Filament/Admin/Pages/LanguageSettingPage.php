@@ -37,10 +37,45 @@ class LanguageSettingPage extends Page implements HasForms
     protected static ?string $title = "Language Settings";
 
 
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('messages.Settings');
+    }
+    public static function getNavigationLabel(): string
+    {
+        return __('messages.Languages');
+    }
+
+    
+    //Permision Page Settings
+    public static function canAccess(): bool
+    {
+       $active_status = auth()->user()->status;
+
+       if($active_status === true){
+        return auth()->user()->language;
+       }else{
+        return false;
+       }
+        
+    }
+
+
+    public function getHeading(): string{
+        return __('messages.LanguageSettings');
+    }
+
+
+
+
+
+
     public function form(Form $form ): Form{
         return $form->schema([
             Section::make()->schema([
                 Select::make('language')
+                    ->label(__('messages.Language'))
                     ->searchable()
                     ->options([
                         'en' => 'English',

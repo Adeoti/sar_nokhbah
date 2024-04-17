@@ -19,6 +19,45 @@ class CurrencySettingPage extends Page implements HasForms
     use InteractsWithForms;
     public ?array $data = [];
     
+
+
+    public static function getNavigationLabel(): string
+    {
+        return __('messages.Currencies');
+    }
+
+
+
+
+    //Permision Page Settings
+    public static function canAccess(): bool
+    {
+       $active_status = auth()->user()->status;
+
+       if($active_status === true){
+        return auth()->user()->currency;
+       }else{
+        return false;
+       }
+        
+    }
+
+
+    public function getHeading(): string{
+        return __('messages.CurrencySettings');
+    }
+
+
+
+
+
+
+    
+    public static function getNavigationGroup(): ?string
+    {
+        return __('messages.Settings');
+    }
+
     public function mount(): void
     {
         $this->form->fill(
@@ -40,6 +79,8 @@ class CurrencySettingPage extends Page implements HasForms
         return $form->schema([
             Section::make()->schema([
                 Select::make('currency')
+                    ->required()
+                    ->label(__('messages.Currency'))
                     ->searchable()
                     ->options([
                         'USD' => 'USD',

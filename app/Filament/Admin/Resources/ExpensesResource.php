@@ -22,6 +22,7 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Admin\Resources\ExpensesResource\Pages;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use App\Filament\Admin\Resources\ExpensesResource\RelationManagers;
 use App\Filament\Admin\Resources\ExpensesResource\Pages\EditExpenses;
 use App\Filament\Admin\Resources\ExpensesResource\Pages\ListExpenses;
@@ -34,24 +35,74 @@ class ExpensesResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-wallet';
     protected static ?string $navigationGroup = "Accounting";
 
+
+
+
+
+
+
+
+    
+    public static function getNavigationGroup(): ?string
+    {
+        return __('messages.Accounting');
+    }
+
+    
+    public static function getNavigationLabel(): string
+    {
+        return __('messages.Expenses');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('messages.Expenses');
+    }
+    public static function getModelLabel(): string
+    {
+        return __('messages.Expenses');
+    }
+
+
+
+
+//Permision Page Settings
+public static function canAccess(): bool
+{
+   $active_status = auth()->user()->status;
+
+   if($active_status === true){
+    return auth()->user()->can_view_expense;
+   }else{
+    return false;
+   }
+    
+}
+
+
+
     public static function form(Form $form): Form
     {
         $userId = Auth()->id();
         return $form
             ->schema([
                Section::make('')->schema([
-                Section::make('Primary Info')->schema([
+                Section::make(__('messages.PrimaryInfo'))->schema([
                     TextInput::make('title')
+                        ->label(__('messages.Title'))
+                        
                         ->required()
                     ,
                    
                     TextInput::make('amount')
+                        ->label(__('messages.Amount'))
                         ->required()
                         ->numeric()
                         ->inputMode('decimal')
                     ,
                     DatePicker::make('dated')
                         ->required()
+                        ->label(__('messages.Dated'))
                         ->placeholder('MM/DD/YYYY')
                         ->native(false)
                         //->date()
@@ -59,7 +110,7 @@ class ExpensesResource extends Resource
                     Hidden::make('user_id')->default($userId)
                 ])->columnSpan(1)
                 ,
-                Section::make('Note')->schema([
+                Section::make(__('messages.Note'))->schema([
                     RichEditor::make('note')
                     ->label('')
                     ->disableToolbarButtons([
@@ -84,6 +135,7 @@ class ExpensesResource extends Resource
             ->columns([
                 //
                 TextColumn::make('title')
+                    ->label(__('messages.Title'))
                     ->searchable(),
                 TextColumn::make('note')
                     ->words(4)
@@ -91,22 +143,23 @@ class ExpensesResource extends Resource
                     ->toggleable()
                     ,
                 TextColumn::make('amount')
+                    ->label(__('messages.Amount'))
                     ->searchable()
                     ->sortable()
                     ->money($system_curency)
                 ,
                 TextColumn::make('dated')
-                    ->label('Exp. Date')
+                    ->label(__('messages.Dated'))
                     ->date()
                     ->sortable()
                     ,
                 TextColumn::make('user.name')
-                    ->label('Added By')
+                    ->label(__('messages.AddedBy'))
                     ->toggleable()
                     ,
                 TextColumn::make('created_at')
                     ->date()
-                    ->label('Created On')
+                    ->label(__('messages.CreatedOn'))
                     ->sortable()
                     
 
@@ -122,6 +175,7 @@ class ExpensesResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    ExportBulkAction::make()
                 ]),
             ]);
     }

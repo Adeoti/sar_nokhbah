@@ -37,6 +37,49 @@ class TransportationBookingResource extends Resource
     protected  ?string $heading = "Transportation Bookings";
 
 
+
+    //Permision Page Settings
+    public static function canAccess(): bool
+    {
+       $active_status = auth()->user()->status;
+
+       if($active_status === true){
+        return auth()->user()->can_book_transportation;
+       }else{
+        return false;
+       }
+        
+    }
+
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('messages.TransportationBookings');
+    }
+    public static function getModelLabel(): string
+    {
+        return __('messages.Booking');
+    }
+
+
+
+
+    
+    public static function getNavigationGroup(): ?string
+    {
+        return __('messages.Booking');
+    }
+
+    
+    public static function getNavigationLabel(): string
+    {
+        return __('messages.TransportationBooking');
+    }
+
+
+
+
+
     protected static ?string $navigationBadgeTooltip = "Active Transportation Bookings";
     public static function getNavigationBadge(): ?string
     {
@@ -283,25 +326,29 @@ class TransportationBookingResource extends Resource
 
                 Select::make('customer_id')
                     ->searchable()
+                    
                     ->required()
-                    ->label('Customer')
+                    ->label(__('messages.Customer'))
                     ->options(Customer::all()->pluck('name','id'))
                     ->createOptionForm([
                                     
                 Section::make('')
                 ->schema([
                     TextInput::make('name')
+                        ->label(__('messages.Name'))
                         ->required(),
 
                     TextInput::make('email')
-                        
+                        ->label(__('messages.Email'))
                         ->email()
                         ,
 
                     TextInput::make('phone_number')
+                        ->label(__('messages.PhoneNumber'))
                         ->required()
                         ,
                     Select::make('country')
+                        ->label(__('messages.Country'))
                         ->options($countries)
                         ->searchable()
                         ->required()
@@ -312,6 +359,7 @@ class TransportationBookingResource extends Resource
                 Section::make('')
                     ->schema([
                         RichEditor::make('address')
+                        ->label(__('messages.Address'))
                         ->toolbarButtons([
                             'blockquote',
                             'bold',
@@ -325,6 +373,7 @@ class TransportationBookingResource extends Resource
                             'undo',
                         ]),
                         RichEditor::make('info')
+                        ->label(__('messages.Info'))
                         ->toolbarButtons([
                             'blockquote',
                             'bold',
@@ -350,10 +399,10 @@ class TransportationBookingResource extends Resource
 
                             Hidden::make('user_id')->default(auth()->id()),
                             DateTimePicker::make('start_at')
-                                ->label('Start At'),
+                                ->label(__('messages.StartAt')),
 
                             DateTimePicker::make('end_at')
-                                ->label('End At'),
+                                ->label(__('messages.EndAt')),
 
 
                                 Section::make('')
@@ -361,6 +410,7 @@ class TransportationBookingResource extends Resource
 
                                         TextInput::make('credit')
                                             ->numeric()
+                                            ->label(__('messages.Credit'))
                                             ->live()
                                             ->required()
                                             ->prefix($currency)
@@ -376,6 +426,7 @@ class TransportationBookingResource extends Resource
                                             }),
 
                                         TextInput::make('vat')
+                                            ->label(__('messages.VAT'))
                                             ->numeric()
                                             ->afterStateUpdated(function(callable $get, $set, $state){
                                                 
@@ -393,6 +444,7 @@ class TransportationBookingResource extends Resource
                                             ->prefix($currency),
 
                                         TextInput::make('debit')
+                                            ->label(__('messages.Debit'))
                                             ->numeric()
                                             ->live()
                                             ->afterStateUpdated(function(callable $get, $set, $state){
@@ -410,6 +462,7 @@ class TransportationBookingResource extends Resource
                                             ,
 
                                         Select::make('status')
+                                            ->label(__('messages.Status'))
                                             ->searchable()
                                             ->required()
                                             ->options([
@@ -421,15 +474,17 @@ class TransportationBookingResource extends Resource
 
 
                                             TextInput::make('total_debit')
+                                            ->label(__('messages.TotalDebit'))
                                             ->readOnly(),
                                             TextInput::make('balance')
+                                            ->label(__('messages.Balance'))
                                             ->readOnly()
                                             ,
 
                                     ])->columns(4),
 
                                 RichEditor::make('note')
-                                    ->label('Order Info')
+                                    ->label(__('messages.OrderInfo'))
                                     ->columnSpan(2)
                                     ->toolbarButtons([
                                         'bold',
@@ -439,7 +494,7 @@ class TransportationBookingResource extends Resource
                                     ]),
 
                                 RichEditor::make('property_details')
-                                    ->label('Property Details')
+                                    ->label(__('messages.PropertyDetails'))
                                     ->columnSpan(1)
                                     ->toolbarButtons([
                                         'bold',
@@ -481,15 +536,15 @@ class TransportationBookingResource extends Resource
 
 
                 TextColumn::make('reference_code')
-                    ->label('Reference Code')
+                    ->label(__('messages.ReferenceCode'))
                     ->searchable()
                     ->copyable()
-                    ->copyMessage('Reference code copied!')
+                    ->copyMessage(__('messages.ReferenceCodeCopied'))
                     ->toggleable(),
 
 
                 TextColumn::make('note')
-                    ->label('Tour Info')
+                    ->label(__('messages.TourInfo'))
                     ->searchable()
                     ->markdown()
                     ->words(6)
@@ -497,19 +552,32 @@ class TransportationBookingResource extends Resource
                     ->toggleable(),
 
                 TextColumn::make('customer.name')
-                    ->label('Customer')
+                    ->label(__('messages.Customer'))
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+                TextColumn::make('start_at')
+                    ->label(__('messages.StartAt'))
+                    ->dateTime()
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+
+                TextColumn::make('end_at')
+                    ->label(__('messages.EndAt'))
+                    ->dateTime()
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
 
                 TextColumn::make('vat')
-                    ->label('VAT')
+                    ->label(__('messages.VAT'))
                     ->money($currency)
                     ->searchable()
                     ->toggleable(),
                     
                 TextColumn::make('debit')
-                    ->label('Debit')
+                    ->label(__('messages.Debit'))
                     ->money($currency)
                     ->searchable()
                     ->toggleable(),
@@ -517,13 +585,13 @@ class TransportationBookingResource extends Resource
                 
                 
                 TextColumn::make('total_debit')
-                    ->label('Total Debit')
+                    ->label(__('messages.TotalDebit'))
                     ->money($currency)
                     ->searchable()
                     ->toggleable(),
                 
                 TextColumn::make('credit')
-                    ->label('Credit')
+                    ->label(__('messages.Credit'))
                     ->searchable()
                     ->money($currency)
                     ->toggleable(),
@@ -532,13 +600,14 @@ class TransportationBookingResource extends Resource
 
 
                 TextColumn::make('balance')
-                    ->label('Balance')
+                    ->label(__('messages.Balance'))
                     ->money($currency)
                     ->searchable()
                     ->toggleable(),
                 
                     TextColumn::make('status')
                         ->badge()
+                        ->label(__('messages.Status'))
                         ->color(fn (string $state): string => match ($state) {
                             'Cancelled' => 'danger',
                             'Active' => 'success',
@@ -559,6 +628,7 @@ class TransportationBookingResource extends Resource
                 ]),
             ]);
     }
+
     public static function getRelations(): array
     {
         return [
