@@ -27,7 +27,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->login()
             ->path('cpanel_n')
-            ->spa()
+            //->spa()
             ->topbar(true)
             ->defaultThemeMode(ThemeMode::Light)
 

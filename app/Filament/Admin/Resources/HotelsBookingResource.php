@@ -695,9 +695,10 @@ class HotelsBookingResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Action::make('invoice')
+                Action::make(__('messages.Invoice'))
+
                     ->icon('heroicon-s-document-arrow-down')
-                    ->tooltip('Generate Invoice')
+                    ->tooltip(__('messages.GenerateInvoice'))
                     ->color('warning')
                     ->openUrlInNewTab()
                     ->url(fn(Booking $record) => route('hotel_booking.pdf.download',$record))

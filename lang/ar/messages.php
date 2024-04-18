@@ -11,6 +11,10 @@ return [
     'Users' => "المستخدمون",
     'User' => "المستخدم",
 
+    'Invoice' => "الفاتورة",
+    'GenerateInvoice' => "إنشاء الفاتورة",
+
+
     'Currencies' => "العملات",
     'Languages' => "اللغات",
     'Reports' => "التقارير",

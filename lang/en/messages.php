@@ -18,6 +18,8 @@ return [
     'Stars' => "Stars",
     'Info' => "Info",
     'TourInfo' => "Tour Info",
+    'Invoice' => "Invoice",
+    'GenerateInvoice' => "Generate Invoice",
 
 
     'Hotel' => "Hotel",
