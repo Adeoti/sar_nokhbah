@@ -11,6 +11,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\SiteSetting;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
@@ -20,6 +21,7 @@ use Filament\Forms\Components\RichEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\DateTimePicker;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use App\Filament\Admin\Resources\KitchenBookingResource\Pages;
 use App\Filament\Admin\Resources\KitchenBookingResource\RelationManagers;
 
@@ -293,7 +295,7 @@ class KitchenBookingResource extends Resource
         ];
         $currency = "";
 
-        $reference_code = "Nokhabah_KT_".date('Ymdhis').uniqid();
+        $reference_code = "Nokhbah_KT_".date('Ymdhis').uniqid();
 
         //dd($reference_code);
 
@@ -616,10 +618,18 @@ class KitchenBookingResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Action::make(__('messages.Invoice'))
+
+                ->icon('heroicon-s-document-arrow-down')
+                ->tooltip(__('messages.GenerateInvoice'))
+                ->color('warning')
+                ->openUrlInNewTab()
+                ->url(fn(Booking $record) => route('kitchen_booking.pdf.download',$record))
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    ExportBulkAction::make()
                 ]),
             ]);
     }

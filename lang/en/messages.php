@@ -12,7 +12,12 @@ return [
     'User' => "User",
     'Currencies' => "Currencies",
     'Languages' => "Languages",
+
     'Reports' => "Reports",
+    'Loss' => "Loss",
+    'Profit' => "Profit",
+
+
     'Expenses' => "Expenses",
     'Hotels' => "Hotels",
     'Stars' => "Stars",
@@ -110,10 +115,20 @@ return [
     'CanEditExpenses' => "Can Edit Expenses",
     'CanDeleteExpenses' => "Can Delete Expenses",
   
+
+
+
+
   
     'CanBookHotel' => "Can Book Hotel",
     'CanBookKitchen' => "Can Book Kitchen",
     'CanBookTransportation' => "Can Book Transportation",
+
+    'InvoiceLanguageSettings' => "Invoice Language Settings",
+    'LanguageUpdated' => "Language Updated",
+    'InvoiceLanguage' => "Invoice Language",
+    'Gotit' => "Got it",
+    'LanguageUpdatedMessages' => "You've successfully updated the invoice Language",
 
 
 

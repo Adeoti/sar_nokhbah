@@ -17,7 +17,14 @@ return [
 
     'Currencies' => "العملات",
     'Languages' => "اللغات",
+
     'Reports' => "التقارير",
+    'Loss' => "الخسارة",
+    'Profit' => "الربح",
+
+
+
+
     'Expenses' => "المصروفات",
     'Hotels' => "الفنادق",
     'Hotel' => "الفندق",
@@ -132,7 +139,12 @@ return [
     'CanBookTransportation' => "يمكن حجز وسيلة النقل",
 
 
-
+    'InvoiceLanguageSettings' => "إعدادات لغة الفاتورة",
+    'LanguageUpdated' => "تم تحديث اللغة",
+    'InvoiceLanguage' => "لغة الفاتورة",
+    'Gotit' => "فهمت",
+    'LanguageUpdatedMessages' => "لقد قمت بتحديث لغة الفاتورة بنجاح",
+    
 
 
 

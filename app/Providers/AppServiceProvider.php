@@ -24,7 +24,11 @@ class AppServiceProvider extends ServiceProvider
         //
         LanguageSwitch::configureUsing(function (LanguageSwitch $switch) {
             $switch
-                ->locales(['ar','en','fr'])
+                ->locales(['ar','en','fr'])        
+                ->outsidePanelRoutes([
+                    'hotel_booking.pdf.download',
+                    
+                ])
                 ;
         });
     }

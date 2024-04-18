@@ -257,7 +257,7 @@
                 <tr>
 
                     
-                    <th scope="col" class="border-0 pl-0">{{ __('Hotel') }}</th>
+                    <th scope="col" class="border-0 pl-0">{{ __('Order Info') }}</th>
 
 
                     @if($invoice->hasItemUnits)

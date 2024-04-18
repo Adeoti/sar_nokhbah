@@ -12,6 +12,7 @@ use App\Models\Customer;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\SiteSetting;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Hidden;
@@ -25,8 +26,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\DateTimePicker;
 use NunoMaduro\Collision\Adapters\Phpunit\State;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use App\Filament\Admin\Resources\HotelsBookingResource\Pages;
 use App\Filament\Admin\Resources\HotelsBookingResource\RelationManagers;
+use Filament\Infolists;
 
 
 class HotelsBookingResource extends Resource
@@ -306,7 +309,7 @@ class HotelsBookingResource extends Resource
         ];
         $currency = "";
 
-        $reference_code = "Nokhabah_HT_".date('Ymdhis').uniqid();
+        $reference_code = "Nokhbah_HT_".date('Ymdhis').uniqid();
 
         //dd($reference_code);
 
@@ -695,6 +698,7 @@ class HotelsBookingResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
                 Action::make(__('messages.Invoice'))
 
                     ->icon('heroicon-s-document-arrow-down')
@@ -702,10 +706,12 @@ class HotelsBookingResource extends Resource
                     ->color('warning')
                     ->openUrlInNewTab()
                     ->url(fn(Booking $record) => route('hotel_booking.pdf.download',$record))
+                    
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    ExportBulkAction::make()
                 ]),
             ]);
     }
@@ -722,7 +728,11 @@ class HotelsBookingResource extends Resource
         return [
             'index' => Pages\ListHotelsBookings::route('/'),
             'create' => Pages\CreateHotelsBooking::route('/create'),
+            
             'edit' => Pages\EditHotelsBooking::route('/{record}/edit'),
         ];
     }
+
+
+
 }

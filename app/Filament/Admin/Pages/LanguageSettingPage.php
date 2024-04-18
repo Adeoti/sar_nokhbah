@@ -44,26 +44,28 @@ class LanguageSettingPage extends Page implements HasForms
     }
     public static function getNavigationLabel(): string
     {
-        return __('messages.Languages');
+        return __('messages.InvoiceLanguage');
     }
 
     
     //Permision Page Settings
     public static function canAccess(): bool
     {
-       $active_status = auth()->user()->status;
+    //    $active_status = auth()->user()->status;
 
-       if($active_status === true){
-        return auth()->user()->language;
-       }else{
-        return false;
-       }
+    //    if($active_status === true){
+    //     return auth()->user()->language;
+    //    }else{
+    //     return false;
+    //    }
         
+
+    return false;
     }
 
 
     public function getHeading(): string{
-        return __('messages.LanguageSettings');
+        return __('messages.InvoiceLanguageSettings');
     }
 
 
@@ -75,7 +77,7 @@ class LanguageSettingPage extends Page implements HasForms
         return $form->schema([
             Section::make()->schema([
                 Select::make('language')
-                    ->label(__('messages.Language'))
+                    ->label(__('messages.InvoiceLanguage'))
                     ->searchable()
                     ->options([
                         'en' => 'English',
@@ -108,10 +110,10 @@ class LanguageSettingPage extends Page implements HasForms
                         
                     $this->dispatch(
                         'alert',
-                        title: 'Language Updated',
-                        text: 'You\'ve successfully updated the app Language',
+                        title: __('messages.LanguageUpdated'),
+                        text: __('messages.LanguageUpdatedMessages'),
                         type: 'success',
-                        button: 'Got it'
+                        button: __('messages.Gotit')
                     );
                     
                 }else{
@@ -122,10 +124,10 @@ class LanguageSettingPage extends Page implements HasForms
 
                     $this->dispatch(
                         'alert',
-                        title: 'Language Updated',
-                        text: 'You\'ve successfully updated the app Language',
+                        title: __('messages.LanguageUpdated'),
+                        text: __('messages.LanguageUpdatedMessages'),
                         type: 'success',
-                        button: 'Got it'
+                        button: __('messages.Gotit')
                     );
 
                 }
