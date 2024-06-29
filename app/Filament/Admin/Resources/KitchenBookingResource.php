@@ -566,6 +566,14 @@ class KitchenBookingResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
+                    
+                 TextColumn::make('created_at')
+                    ->label(__('messages.Dated'))
+                    ->dateTime()
+                    
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
 
                 TextColumn::make('vat')
                     ->label(__('messages.VAT'))

@@ -640,6 +640,13 @@ class HotelsBookingResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
+                TextColumn::make('created_at')
+                    ->label(__('messages.Dated'))
+                    ->dateTime()
+                    
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
 
                 TextColumn::make('customer.name')
                     ->label(__('messages.Customer'))

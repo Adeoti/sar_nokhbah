@@ -29,9 +29,9 @@ class ReportWidget extends BaseWidget
 
             $expenses = number_format($expenses,2);
             $balance = number_format($balance,2);
-                $expenses = SiteSetting::first()->currency.$expenses;
-                $balance = SiteSetting::first()->currency.$balance;
-                $profit = SiteSetting::first()->currency.$profit;
+                $expenses = SiteSetting::first()->currency." ".$expenses;
+                $balance = SiteSetting::first()->currency." ".$balance;
+                $profit = SiteSetting::first()->currency." ".$profit;
 
         return [
             Stat::make(__('messages.Expenses'),$expenses),

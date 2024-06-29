@@ -84,7 +84,7 @@ class CurrencySettingPage extends Page implements HasForms
                     ->searchable()
                     ->options([
                         'USD' => 'USD',
-                        'SAR' => 'Riyal',
+                        'SAR' => 'SAR',
                         'NGN' => 'NGN'
                     ])
             ]),
